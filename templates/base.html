@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block icon %}{% endblock %}
+
+    {% include 'includes/head.html' %}
+
+</head>
+
+<body>
+
+<!-- ***** Preloader Start ***** -->
+<div id="preloader">
+    <div class="jumper">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<!-- ***** Preloader End ***** -->
+
+<!-- Header -->
+<header class="">
+    <nav class="navbar navbar-expand-lg">
+        {% include 'includes/links_header.html' %}
+    </nav>
+</header>
+
+
+{% block content %}{% endblock %}
+
+
+<footer>
+    {% include 'includes/footer.html' %}
+</footer>
+
+{% include 'includes/bootstrap.html' %}
+{% block js %}{% endblock %}
+
+</body>
+</html>
