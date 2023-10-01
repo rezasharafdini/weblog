@@ -1,0 +1,6 @@
+<ul>
+    {% for category in all_categories %}
+        <li><a href="{% url 'article_app:list' %}?category={{ category.name }}">- {{ category.name }}</a></li>
+    {% endfor %}
+
+</ul>
