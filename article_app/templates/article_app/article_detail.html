@@ -8,187 +8,181 @@
 
 
     <section class="blog-posts grid-system" style="margin-top: 0">
-      <div class="container">
-        <div class="row">
-          <div style="margin-top: 150px" class="col-lg-8">
-            <div class="all-blog-posts">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="blog-post">
-                    <div class="blog-thumb">
-                      <img src="{{ article.image.url }}" alt="">
-                    </div>
-                    <div class="down-content">
-                      <span>{{ article.category.all.first.name }}</span>
-                      <a href="post-details.html"><h4>{{ article.title }}</h4></a>
-                      <ul class="post-info">
-                        <li><a href="#">{{ article.user.full_name }}</a></li>
-                        <li><a href="#">{{ article.created_at }}</a></li>
-                        <li><a href="#">10 Comments</a></li>
-                      </ul>
-                      <p>{{ article.description }}</p>
-                      <div class="post-options">
+        <div class="container">
+            <div class="row">
+                <div style="margin-top: 150px" class="col-lg-8">
+                    <div class="all-blog-posts">
                         <div class="row">
-                          <div class="col-6">
-                            <ul class="post-tags">
-                              <li><i class="fa fa-tags"></i></li>
-                              <li><a href="#">Best Templates</a>,</li>
-                              <li><a href="#">TemplateMo</a></li>
-                            </ul>
-                          </div>
-                          <div class="col-6">
-                            <ul class="post-share">
-                              <li><i class="fa fa-share-alt"></i></li>
-                              <li><a href="#">Facebook</a>,</li>
-                              <li><a href="#"> Twitter</a></li>
-                            </ul>
-                          </div>
+                            <div class="col-lg-12">
+                                <div class="blog-post">
+                                    <div class="blog-thumb">
+                                        <img src="{{ article.image.url }}" alt="">
+                                    </div>
+                                    <div class="down-content">
+                                        <span>{{ article.category.all.first.name }}</span>
+                                        <a href="#"><h4>{{ article.title }}</h4></a>
+                                        <ul class="post-info">
+                                            <li><a href="#">{{ article.user.full_name }}</a></li>
+                                            <li><a href="#">{{ article.created_at }}</a></li>
+                                            <li><a href="#">{{ article.comments.all.count }} Comments</a></li>
+                                        </ul>
+                                        <p>{{ article.description }}</p>
+                                        <div class="post-options">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <ul class="post-tags">
+                                                        <li><i class="fa fa-tags"></i></li>
+                                                        {% for category in article.category.all %}
+                                                            <li><a href="{% url 'article_app:list' %}?category={{ category.name }}">{{ category.name }}</a>,</li>
+
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                                <div class="col-6">
+                                                    <ul class="post-share">
+                                                        <li><i class="fa fa-share-alt"></i></li>
+                                                        <li><a href="#">Facebook</a>,</li>
+                                                        <li><a href="#"> Twitter</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="sidebar-item comments">
+                                    <div class="sidebar-heading">
+                                        <h2 id="number-comments">{{ article.comments.all.count }} comments</h2>
+                                    </div>
+                                    <div class="content">
+                                        <ul id="all-comments">
+                                            {% for comment in article.comments.all %}
+                                                {% if comment.parent == None %}
+                                                    <li id="{{ comment.id }}">
+                                                        <div class="author-thumb">
+                                                            <img src="{{ comment.user.image.url }}" alt="">
+                                                        </div>
+                                                        <div class="right-content">
+                                                            <h4>{{ comment.user.full_name }}<span>{{ comment.created_at }}</span>
+                                                                <span><button class="btn repr"
+                                                                              onclick="Reply('{{ comment.id }}')">reply</button></span>
+                                                            </h4>
+                                                            <p>{{ comment.content }}</p>
+                                                        </div>
+                                                    </li>
+                                                    {% for item in comment.subs.all %}
+                                                        <li class="replied">
+                                                            <div class="author-thumb">
+                                                                <img src="{{ item.user.image.url }}" alt="">
+                                                            </div>
+                                                            <div class="right-content">
+                                                                <h4>{{ item.user.full_name }}<span>{{ item.created_at }}</span>
+                                                                </h4>
+                                                                <p>{{ item.content }}</p>
+                                                            </div>
+                                                        </li>
+
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="sidebar-item submit-comment">
+                                    <div class="sidebar-heading">
+                                        <h2>Your comment</h2>
+                                    </div>
+                                    <div class="content">
+                                        <form id="comment" method="post" action="{% url 'article_app:add_comment' %}">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <input type='hidden' id="parent-id" name="parent_id" value="">
+                                                <input type="hidden" name="article_id" value="{{ article.id }}">
+
+                                                <div class="col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        {{ form.subject }}
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset>
+                                                        {{ form.content }}
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset>
+                                                        <button type="submit" id="form-submit" class="main-button">
+                                                            Submit
+                                                        </button>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-                <div class="col-lg-12">
-                  <div class="sidebar-item comments">
-                    <div class="sidebar-heading">
-                      <h2>4 comments</h2>
-                    </div>
-                    <div class="content">
-                      <ul>
-                        <li>
-                          <div class="author-thumb">
-                            <img src="assets/images/comment-author-01.jpg" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Charles Kate<span>May 16, 2020</span></h4>
-                            <p>Fusce ornare mollis eros. Duis et diam vitae justo fringilla condimentum eu quis leo. Vestibulum id turpis porttitor sapien facilisis scelerisque. Curabitur a nisl eu lacus convallis eleifend posuere id tellus.</p>
-                          </div>
-                        </li>
-                        <li class="replied">
-                          <div class="author-thumb">
-                            <img src="assets/images/comment-author-02.jpg" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Thirteen Man<span>May 20, 2020</span></h4>
-                            <p>In porta urna sed venenatis sollicitudin. Praesent urna sem, pulvinar vel mattis eget.</p>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="author-thumb">
-                            <img src="assets/images/comment-author-03.jpg" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Belisimo Mama<span>May 16, 2020</span></h4>
-                            <p>Nullam nec pharetra nibh. Cras tortor nulla, faucibus id tincidunt in, ultrices eget ligula. Sed vitae suscipit ligula. Vestibulum id turpis volutpat, lobortis turpis ac, molestie nibh.</p>
-                          </div>
-                        </li>
-                        <li class="replied">
-                          <div class="author-thumb">
-                            <img src="assets/images/comment-author-02.jpg" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Thirteen Man<span>May 22, 2020</span></h4>
-                            <p>Mauris sit amet justo vulputate, cursus massa congue, vestibulum odio. Aenean elit nunc, gravida in erat sit amet, feugiat viverra leo.</p>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="sidebar-item submit-comment">
-                    <div class="sidebar-heading">
-                      <h2>Your comment</h2>
-                    </div>
-                    <div class="content">
-                      <form id="comment" action="#" method="post">
+                <div style="margin-top: 150px" class="col-lg-4">
+                    <div class="sidebar">
                         <div class="row">
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="name" type="text" id="name" placeholder="Your name" required="">
-                            </fieldset>
-                          </div>
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="email" type="text" id="email" placeholder="Your email" required="">
-                            </fieldset>
-                          </div>
-                          <div class="col-md-12 col-sm-12">
-                            <fieldset>
-                              <input name="subject" type="text" id="subject" placeholder="Subject">
-                            </fieldset>
-                          </div>
-                          <div class="col-lg-12">
-                            <fieldset>
-                              <textarea name="message" rows="6" id="message" placeholder="Type your comment" required=""></textarea>
-                            </fieldset>
-                          </div>
-                          <div class="col-lg-12">
-                            <fieldset>
-                              <button type="submit" id="form-submit" class="main-button">Submit</button>
-                            </fieldset>
-                          </div>
+                            <div class="col-lg-12">
+                                <div class="sidebar-item search">
+                                    <form id="search_form" name="gs" method="GET" action="{% url 'article_app:list' %}">
+                                        <input type="text" name="q" class="searchText" placeholder="type to search..."
+                                               autocomplete="on">
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="sidebar-item recent-posts">
+                                    <div class="sidebar-heading">
+                                        <h2>Recent Posts</h2>
+                                    </div>
+                                    <div class="content">
+                                        {% include 'includes/recent_posts.html' %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="sidebar-item categories">
+                                    <div class="sidebar-heading">
+                                        <h2>Categories</h2>
+                                    </div>
+                                    <div class="content">
+                                        {% include 'includes/all_categories.html' %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="sidebar-item tags">
+                                    <div class="sidebar-heading">
+                                        <h2>Tag Clouds</h2>
+                                    </div>
+                                    <div class="content">
+                                        <ul>
+                                            <li><a href="#">Lifestyle</a></li>
+                                            <li><a href="#">Creative</a></li>
+                                            <li><a href="#">HTML5</a></li>
+                                            <li><a href="#">Inspiration</a></li>
+                                            <li><a href="#">Motivation</a></li>
+                                            <li><a href="#">PSD</a></li>
+                                            <li><a href="#">Responsive</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </form>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div style="margin-top: 150px" class="col-lg-4">
-            <div class="sidebar">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="sidebar-item search">
-                    <form id="search_form" name="gs" method="GET" action="{% url 'article_app:list' %}">
-                      <input type="text" name="q" class="searchText" placeholder="type to search..." autocomplete="on">
-                    </form>
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="sidebar-item recent-posts">
-                    <div class="sidebar-heading">
-                      <h2>Recent Posts</h2>
-                    </div>
-                    <div class="content">
-                       {% include 'includes/recent_posts.html' %}
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="sidebar-item categories">
-                    <div class="sidebar-heading">
-                      <h2>Categories</h2>
-                    </div>
-                    <div class="content">
-                     {% include 'includes/all_categories.html' %}
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="sidebar-item tags">
-                    <div class="sidebar-heading">
-                      <h2>Tag Clouds</h2>
-                    </div>
-                    <div class="content">
-                      <ul>
-                        <li><a href="#">Lifestyle</a></li>
-                        <li><a href="#">Creative</a></li>
-                        <li><a href="#">HTML5</a></li>
-                        <li><a href="#">Inspiration</a></li>
-                        <li><a href="#">Motivation</a></li>
-                        <li><a href="#">PSD</a></li>
-                        <li><a href="#">Responsive</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
 
 
@@ -196,4 +190,60 @@
 
 
 
+{% endblock %}
+
+{% block js %}
+    <script>
+        function Reply(id) {
+            document.getElementById('parent-id').value = id;
+            window.location.href = '#comment';
+        }
+
+        var btn = document.getElementById('form-submit');
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            axios.post('/articles/add/comment', document.getElementById('comment'))
+                .then(res => {
+                    if (res.data.Reply === 'False') {
+                        document.getElementById('number-comments').innerHTML = res.data.NumberComments + ' comments';
+
+                        document.getElementById('all-comments').innerHTML +=
+                            `<li id="${res.data.CommentId}">
+                                                        <div class="author-thumb">
+                                                            <img src="${res.data.ImageUrl}" alt="">
+                                                        </div>
+                                                        <div class="right-content">
+                                                            <h4>${res.data.FullName}<span>${res.data.CreatedAt}</span>
+                                                                <span><button class="btn repr"
+                                                                              onclick="Reply('${res.data.CommentId}')">reply</button></span>
+                                                            </h4>
+                                                            <p>${res.data.Content}</p>
+                                                        </div>
+                                                    </li>`
+
+
+                    }
+                    if (res.data.Reply === 'True') {
+                        document.getElementById('number-comments').innerHTML = res.data.NumberComments + ' comments';
+                        $(`<li class="replied">
+                                       <div class="author-thumb">
+                                            <img src="${res.data.ImageUrl}" alt="">
+                                       </div>
+                                       <div class="right-content">
+                                            <h4>${res.data.FullName}<span>${res.data.CreatedAt}</span>
+                                            </h4>
+                                            <p>${res.data.Content}</p>
+                                       </div>
+                            </li>`).insertAfter('[id=' + res.data.ParentId + ']');
+
+                        document.getElementById('parent-id').value = '';
+                        window.location.href='#'+res.data.ParentId;
+                    }
+
+                })
+                .cache(err =>
+                    window.alert(err))
+        })
+
+    </script>
 {% endblock %}

@@ -18,3 +18,6 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ('is_publish',)
     search_fields = ('title', 'slug')
     list_editable = ('is_publish',)
+
+
+admin.site.register(models.Comment)

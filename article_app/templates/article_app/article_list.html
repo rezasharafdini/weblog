@@ -43,11 +43,12 @@
                                         </div>
                                         <div class="down-content">
                                             <span>Lifestyle</span>
-                                            <a href="post-details.html"><h4>{{ article.title }}</h4></a>
+                                            <a href="{% url 'article_app:detail' article.slug %}">
+                                                <h4>{{ article.title }}</h4></a>
                                             <ul class="post-info">
                                                 <li><a href="#">{{ article.user.full_name }}</a></li>
                                                 <li><a href="#">{{ article.created_at }}</a></li>
-                                                <li><a href="#">12 Comments</a></li>
+                                                <li><a href="#">{{ article.comments.all.count }} Comments</a></li>
                                             </ul>
                                             <p>{{ article.description }}</p>
                                             <div class="post-options">
@@ -55,8 +56,12 @@
                                                     <div class="col-lg-12">
                                                         <ul class="post-tags">
                                                             <li><i class="fa fa-tags"></i></li>
-                                                            <li><a href="#">Best Templates</a>,</li>
-                                                            <li><a href="#">TemplateMo</a></li>
+                                                            {% for category in article.category.all %}
+
+                                                                <li><a href="{% url 'article_app:list' %}?category={{ category.name }}">{{ category.name }}</a></li>
+
+                                                            {% endfor %}
+
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -70,21 +75,31 @@
                                 {% if page_obj.has_other_pages %}
                                     <ul class="page-numbers">
                                         {% if page_obj.has_previous %}
-                                            <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"><i
+                                            <li><a href="?page=
+
+                                                    {{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"><i
                                                     class="fa fa-angle-double-left"></i></a></li>
                                         {% endif %}
                                         {% for i in page_obj.paginator.page_range %}
                                             {% if page_obj.number == i %}
-                                                <li class="active"><a href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" >{{ i }}</a></li>
+                                                <li class="active"><a href="?page=
+
+                                                        {{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a>
+                                                </li>
                                             {% else %}
-                                                <li><a href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a></li>
+                                                <li><a href="?page=
+
+                                                        {{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a>
+                                                </li>
                                             {% endif %}
 
                                         {% endfor %}
 
 
                                         {% if page_obj.has_next %}
-                                            <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"><i
+                                            <li><a href="?page=
+
+                                                    {{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"><i
                                                     class="fa fa-angle-double-right"></i></a></li>
                                         {% endif %}
 

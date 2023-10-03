@@ -47,3 +47,8 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["email", "full_name", "image", "password", "is_active", "is_admin"]
+
+
+class ContactUsForm(forms.Form):
+    subject = forms.CharField(max_length=50, widget=forms.TextInput({'placeholder': 'subject'}))
+    message = forms.CharField(widget=forms.Textarea({'placeholder': 'message'}))

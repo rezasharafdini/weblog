@@ -8,7 +8,7 @@ class Category(models.Model):
     slug = models.SlugField()
     image = models.ImageField(upload_to='category/image')
 
-    parent = models.ForeignKey('self', null=True,blank=True,on_delete=models.CASCADE, related_name='subs')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='subs')
     is_publish = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
@@ -44,3 +44,16 @@ class Article(models.Model):
         return format_html(f'<img src="{self.image.url}" width="50px" height="50px">')
 
     show_image.short_description = 'image'
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='subs')
+    content = models.TextField()
+    subject = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_publish = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.full_name + ':' + self.subject
