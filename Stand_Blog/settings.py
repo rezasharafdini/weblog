@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Package
     'django_cleanup.apps.CleanupConfig',
+    'widget_tweaks',
     # App
     'home_app.apps.HomeAppConfig',
     'article_app.apps.ArticleAppConfig',

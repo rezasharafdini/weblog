@@ -4,7 +4,7 @@ from django.utils.html import format_html
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, email, full_name, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -14,6 +14,7 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
+            full_name=full_name
 
         )
 
@@ -21,13 +22,15 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, email, full_name, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
             email,
+            full_name=full_name,
+
             password=password,
 
         )
@@ -43,14 +46,14 @@ class User(AbstractBaseUser):
         unique=True,
     )
     image = models.ImageField(default='user/image/default_user.jpg', upload_to='user/image')
-    full_name = models.CharField(max_length=35)
+    full_name = models.CharField(max_length=35, unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['full_name']
 
     def __str__(self):
         return self.email
@@ -75,3 +78,24 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class Otp(models.Model):
+    username = models.CharField(max_length=50)
+    email = models.EmailField(max_length=255)
+    password = models.CharField(max_length=20)
+    randcode = models.CharField(max_length=5)
+    token = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+
+
+class Profile(models.Model):
+    email_user = models.EmailField(max_length=255)
+    token = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email_user

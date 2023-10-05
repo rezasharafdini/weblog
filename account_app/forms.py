@@ -17,7 +17,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email"]
+        fields = ["email", 'full_name']
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -52,3 +52,28 @@ class UserChangeForm(forms.ModelForm):
 class ContactUsForm(forms.Form):
     subject = forms.CharField(max_length=50, widget=forms.TextInput({'placeholder': 'subject'}))
     message = forms.CharField(widget=forms.Textarea({'placeholder': 'message'}))
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput({'placeholder': 'Email'}))
+    password = forms.CharField(max_length=20, widget=forms.PasswordInput({'placeholder': 'Password'}))
+
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(max_length=50, widget=forms.TextInput({'placeholder': 'username'}))
+    email = forms.EmailField(widget=forms.EmailInput({'placeholder': 'email'}))
+    password = forms.CharField(max_length=20, widget=forms.PasswordInput({'placeholder': 'password'}))
+
+
+class OtpForm(forms.Form):
+    randcode = forms.CharField(max_length=5, widget=forms.TextInput({'placeholder': 'code'}))
+
+
+class VerifyEmailForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput({'placeholder': 'email'}))
+
+
+class ChangePasswordForm(forms.Form):
+    password = forms.CharField(max_length=20, widget=forms.PasswordInput({'placeholder': 'new password'}))
+    confirmation_password = forms.CharField(max_length=20,
+                                            widget=forms.PasswordInput({'placeholder': 'confirmation password'}))

@@ -33,7 +33,9 @@
                                                     <ul class="post-tags">
                                                         <li><i class="fa fa-tags"></i></li>
                                                         {% for category in article.category.all %}
-                                                            <li><a href="{% url 'article_app:list' %}?category={{ category.name }}">{{ category.name }}</a>,</li>
+                                                            <li>
+                                                                <a href="{% url 'article_app:list' %}?category={{ category.name }}">{{ category.name }}</a>,
+                                                            </li>
 
                                                         {% endfor %}
                                                     </ul>
@@ -57,7 +59,7 @@
                                     </div>
                                     <div class="content">
                                         <ul id="all-comments">
-                                            {% for comment in article.comments.all %}
+                                            {% for comment in article.comments.all reversed %}
                                                 {% if comment.parent == None %}
                                                     <li id="{{ comment.id }}">
                                                         <div class="author-thumb">
@@ -65,8 +67,10 @@
                                                         </div>
                                                         <div class="right-content">
                                                             <h4>{{ comment.user.full_name }}<span>{{ comment.created_at }}</span>
-                                                                <span><button class="btn repr"
-                                                                              onclick="Reply('{{ comment.id }}')">reply</button></span>
+                                                                {% if request.user.is_authenticated %}
+                                                                    <span><button class="btn repr"
+                                                                                  onclick="Reply('{{ comment.id }}')">reply</button></span>
+                                                                {% endif %}
                                                             </h4>
                                                             <p>{{ comment.content }}</p>
                                                         </div>
@@ -94,36 +98,41 @@
                             </div>
                             <div class="col-lg-12">
                                 <div class="sidebar-item submit-comment">
-                                    <div class="sidebar-heading">
-                                        <h2>Your comment</h2>
-                                    </div>
-                                    <div class="content">
-                                        <form id="comment" method="post" action="{% url 'article_app:add_comment' %}">
-                                            {% csrf_token %}
-                                            <div class="row">
-                                                <input type='hidden' id="parent-id" name="parent_id" value="">
-                                                <input type="hidden" name="article_id" value="{{ article.id }}">
+                                    {% if request.user.is_authenticated %}
+                                        <div class="sidebar-heading">
+                                            <h2>Your comment</h2>
+                                        </div>
+                                        <div class="content">
 
-                                                <div class="col-md-12 col-sm-12">
-                                                    <fieldset>
-                                                        {{ form.subject }}
-                                                    </fieldset>
+                                            <form id="comment" method="post"
+                                                  action="{% url 'article_app:add_comment' %}">
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    <input type='hidden' id="parent-id" name="parent_id" value="">
+                                                    <input type="hidden" name="article_id" value="{{ article.id }}">
+
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <fieldset>
+                                                            {{ form.subject }}
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <fieldset>
+                                                            {{ form.content }}
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <fieldset>
+                                                            <button type="submit" id="form-submit" class="main-button">
+                                                                Submit
+                                                            </button>
+                                                        </fieldset>
+                                                    </div>
                                                 </div>
-                                                <div class="col-lg-12">
-                                                    <fieldset>
-                                                        {{ form.content }}
-                                                    </fieldset>
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <fieldset>
-                                                        <button type="submit" id="form-submit" class="main-button">
-                                                            Submit
-                                                        </button>
-                                                    </fieldset>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                            </form>
+
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -207,8 +216,7 @@
                     if (res.data.Reply === 'False') {
                         document.getElementById('number-comments').innerHTML = res.data.NumberComments + ' comments';
 
-                        document.getElementById('all-comments').innerHTML +=
-                            `<li id="${res.data.CommentId}">
+                        document.getElementById('all-comments').innerHTML = `<li id="${res.data.CommentId}">
                                                         <div class="author-thumb">
                                                             <img src="${res.data.ImageUrl}" alt="">
                                                         </div>
@@ -219,7 +227,7 @@
                                                             </h4>
                                                             <p>${res.data.Content}</p>
                                                         </div>
-                                                    </li>`
+                                                    </li>` + document.getElementById('all-comments').innerHTML
 
 
                     }
@@ -237,7 +245,7 @@
                             </li>`).insertAfter('[id=' + res.data.ParentId + ']');
 
                         document.getElementById('parent-id').value = '';
-                        window.location.href='#'+res.data.ParentId;
+                        window.location.href = '#' + res.data.ParentId;
                     }
 
                 })

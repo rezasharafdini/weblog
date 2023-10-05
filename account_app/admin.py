@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from . import forms
-from .models import User
+from .models import User, Otp,Profile
 
 
 class UserAdmin(BaseUserAdmin):
@@ -27,7 +27,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "full_name",'image', "password1", "password2"],
+                "fields": ["email", "full_name", 'image', "password1", "password2"],
             },
         ),
     ]
@@ -41,3 +41,7 @@ admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+admin.site.register(Otp)
+admin.site.register(Profile)
+
+
